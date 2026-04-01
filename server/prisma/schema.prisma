@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Org {
+  id            String         @id @default(uuid())
+  name          String
+  logoUrl       String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  users         User[]
+  leads         Lead[]
+  campaigns     Campaign[]
+  turfAIConfigs TurfAIConfig[]
+  reminders     Reminder[]
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("SALES") // ADMIN, MARKETING, SALES
+  orgId     String
+  org       Org      @relation(fields: [orgId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Lead {
+  id             String     @id @default(uuid())
+  name           String
+  company        String?
+  email          String?
+  phone          String?
+  source         String?
+  status         String     @default("NEW") // NEW, CONTACTED, QUALIFIED, PROPOSAL_SENT, NEGOTIATION, CLOSED_WON, CLOSED_LOST
+  expectedValue  Float?
+  lastContacted  DateTime?
+  notes          String?
+  orgId          String
+  org            Org        @relation(fields: [orgId], references: [id])
+  reminders      Reminder[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model Campaign {
+  id        String       @id @default(uuid())
+  name      String
+  type      String       // EMAIL, WHATSAPP, SOCIAL
+  status    String       @default("DRAFT")
+  content   String?      // Stored as JSON string for SQLite
+  orgId     String
+  org       Org          @relation(fields: [orgId], references: [id])
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model TurfAIConfig {
+  id          String   @id @default(uuid())
+  featureKey  String // e.g., 'brochure_gen', 'ad_gen'
+  webhookUrl  String
+  secret      String // Encrypted
+  orgId       String
+  org         Org      @relation(fields: [orgId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([orgId, featureKey])
+}
+
+model Reminder {
+  id        String   @id @default(uuid())
+  note      String
+  dueDate   DateTime
+  isDone    Boolean  @default(false)
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id])
+  orgId     String
+  org       Org      @relation(fields: [orgId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
