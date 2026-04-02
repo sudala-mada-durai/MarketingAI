@@ -37,7 +37,13 @@ export default function MarketingBrain() {
   const fetchAssets = async () => {
     try {
       const res = await axios.get('/api/brain/assets')
-      setAssets(res.data)
+      if (Array.isArray(res.data)) {
+        setAssets(res.data)
+      } else {
+        setAssets([])
+      }
+    } catch {
+      setAssets([])
     } finally {
       setLoading(false)
     }

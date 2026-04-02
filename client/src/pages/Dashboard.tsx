@@ -42,7 +42,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="text-4xl font-black text-white tracking-tight"
@@ -52,7 +52,7 @@ export default function Dashboard() {
           <p className="text-gray-400 text-lg mt-2 font-medium">Here's a snapshot of your sales ecosystem.</p>
         </div>
         <div className="flex items-center gap-3">
-          <CreativeButton 
+          <CreativeButton
             onClick={() => navigate('/studio/brochure')}
             className="h-14 px-8 text-[#0a0a0a]"
           >
@@ -85,9 +85,9 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         {/* Recent Activity Table-like list */}
-        <GlassCard className="lg:col-span-3 !p-0 overflow-hidden" delay={0.4}>
+        <GlassCard className="xl:col-span-3 !p-0 overflow-hidden" delay={0.4}>
           <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
             <h2 className="text-xl font-black text-white flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-brand-400" />
@@ -99,8 +99,8 @@ export default function Dashboard() {
           </div>
           <div className="divide-y divide-white/5">
             {leads.slice(0, 5).map((lead: any) => (
-              <motion.div 
-                key={lead.id} 
+              <motion.div
+                key={lead.id}
                 whileHover={{ backgroundColor: 'rgba(255,255,255,0.03)' }}
                 className="flex items-center gap-5 p-6 transition-colors"
               >
@@ -133,7 +133,7 @@ export default function Dashboard() {
         </GlassCard>
 
         {/* Priority Reminders */}
-        <GlassCard className="lg:col-span-2 !p-0 overflow-hidden" delay={0.5}>
+        <GlassCard className="xl:col-span-2 !p-0 overflow-hidden" delay={0.5}>
           <div className="p-8 border-b border-white/5 bg-white/[0.02]">
             <h2 className="text-xl font-black text-white flex items-center gap-2">
               <Bell className="w-5 h-5 text-orange-400" />

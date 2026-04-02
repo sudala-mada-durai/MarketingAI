@@ -51,7 +51,7 @@ export default function AdStudio() {
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="text-4xl font-black text-white tracking-tight"
@@ -62,7 +62,7 @@ export default function AdStudio() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
         {/* Controls Panel */}
         <GlassCard className="lg:col-span-2 space-y-8" delay={0.1}>
           <div className="flex items-center gap-3">
@@ -74,14 +74,14 @@ export default function AdStudio() {
 
           <div className="space-y-4">
             <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Distribution Channels</label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {PLATFORMS.map(p => (
-                <button 
-                  key={p.id} 
+                <button
+                  key={p.id}
                   onClick={() => togglePlatform(p.id)}
-                  className={`flex items-center gap-3 p-4 rounded-2xl border transition-all duration-300
-                    ${platforms.includes(p.id) 
-                      ? `${p.bg} ${p.border} ${p.color} shadow-[0_0_20px_rgba(0,0,0,0.2)]` 
+                  className={`flex items-center gap-3 p-3 rounded-2xl border transition-all duration-300
+                    ${platforms.includes(p.id)
+                      ? `${p.bg} ${p.border} ${p.color} shadow-[0_0_20px_rgba(0,0,0,0.2)]`
                       : 'border-white/5 bg-white/[0.02] text-gray-500 hover:border-white/10 hover:bg-white/[0.05]'
                     }`}
                 >
@@ -96,12 +96,12 @@ export default function AdStudio() {
             <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Brand Voice</label>
             <div className="flex flex-wrap gap-2">
               {TONES.map(t => (
-                <button 
-                  key={t} 
+                <button
+                  key={t}
                   onClick={() => setTone(t)}
                   className={`px-4 py-2 rounded-xl text-xs font-black tracking-tight border transition-all duration-300
-                    ${tone === t 
-                      ? 'bg-brand-500/20 border-brand-500/40 text-brand-400 shadow-[0_0_15px_rgba(0,212,170,0.1)]' 
+                    ${tone === t
+                      ? 'bg-brand-500/20 border-brand-500/40 text-brand-400 shadow-[0_0_15px_rgba(0,212,170,0.1)]'
                       : 'border-white/5 bg-white/[0.01] text-gray-600 hover:border-white/10 hover:text-gray-400'
                     }`}
                 >
@@ -113,18 +113,18 @@ export default function AdStudio() {
 
           <div className="space-y-4">
             <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Campaign Fundamentals</label>
-            <textarea 
-              value={prompt} 
-              onChange={e => setPrompt(e.target.value)} 
+            <textarea
+              value={prompt}
+              onChange={e => setPrompt(e.target.value)}
               rows={5}
               className="input-creative w-full resize-none"
-              placeholder="e.g., 50% Off Summer Solstice Sale. Target: Fashion enthusiasts. Key hooks: Limited edition, handcrafted, sustainable materials..." 
+              placeholder="e.g., 50% Off Summer Solstice Sale. Target: Fashion enthusiasts. Key hooks: Limited edition, handcrafted, sustainable materials..."
             />
           </div>
 
-          <CreativeButton 
-            id="generate-ad-btn" 
-            onClick={() => genMut.mutate()} 
+          <CreativeButton
+            id="generate-ad-btn"
+            onClick={() => genMut.mutate()}
             disabled={genMut.isPending || !prompt.trim() || platforms.length === 0}
             className="w-full h-14 justify-center text-[#0a0a0a] font-black text-lg"
           >
@@ -160,9 +160,9 @@ export default function AdStudio() {
               const p = PLATFORMS.find(x => x.id === pid)
               if (!p) return null
               return (
-                <motion.div 
-                  key={pid} 
-                  initial={{ opacity: 0, x: 20 }} 
+                <motion.div
+                  key={pid}
+                  initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
