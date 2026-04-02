@@ -10,6 +10,7 @@ import AdStudio from './pages/Studio/AdStudio'
 import Campaigns from './pages/Campaigns/Campaigns'
 import CompetitorIntel from './pages/CompetitorIntel'
 import MarketingBrain from './pages/Intelligence/MarketingBrain'
+import DocumentAnalyzer from './pages/DocumentAnalyzer'
 import Settings from './pages/Settings'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -38,6 +39,7 @@ export default function App() {
             <Route path="campaigns" element={<Campaigns />} />
             <Route path="brain" element={<MarketingBrain />} />
             <Route path="intelligence" element={<CompetitorIntel />} />
+            <Route path="docs" element={<DocumentAnalyzer />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>

@@ -10,7 +10,7 @@ router.get('/turf', async (req, res) => {
   try {
     const configs = await prisma.turfAIConfig.findMany({
       where: { orgId: req.user!.orgId },
-      select: { featureKey: true, webhookUrl: true, updatedAt: true },
+      select: { featureKey: true, webhookUrl: true, secret: true, updatedAt: true },
     })
     res.json({ configs })
   } catch (err: any) {
@@ -29,7 +29,7 @@ router.post('/turf', requireRole('ADMIN'), async (req, res) => {
       update: { webhookUrl, ...(secret ? { secret } : {}) },
       create: { orgId: req.user!.orgId, featureKey, webhookUrl, secret: secret || '' },
     })
-    res.json({ config: { featureKey: config.featureKey, webhookUrl: config.webhookUrl } })
+    res.json({ config: { featureKey: config.featureKey, webhookUrl: config.webhookUrl, secret: config.secret } })
   } catch (err: any) {
     res.status(500).json({ message: err.message })
   }

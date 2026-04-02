@@ -8,6 +8,8 @@ import CreativeButton from '../components/shared/CreativeButton'
 import CreativeInput from '../components/shared/CreativeInput'
 
 const FEATURES = [
+  { key: 'wf-marketing-brain-index', label: 'Knowledge Indexer', desc: 'Indexes brand assets and docs into the RAG brain' },
+  { key: 'wf-marketing-brain-query', label: 'Brain Strategy Chat', desc: 'Queries the RAG brain for strategic insights' },
   { key: 'brochure_gen', label: 'Brochure Generator', desc: 'Generates brochure copy and headlines' },
   { key: 'ad_gen', label: 'Ad Copy Generator', desc: 'Creates platform-specific ad copy' },
   { key: 'description_gen', label: 'Description Writer', desc: 'Writes product/service descriptions' },

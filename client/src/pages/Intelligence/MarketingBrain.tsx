@@ -5,7 +5,7 @@ import {
   Search, FileText, Zap, ChevronRight, X, Loader2,
   Trash2, ExternalLink
 } from 'lucide-react'
-import axios from 'axios'
+import api from '../../services/api'
 
 interface KnowledgeAsset {
   id: string
@@ -25,10 +25,40 @@ export default function MarketingBrain() {
   const [chatHistory, setChatHistory] = useState<{role: string, content: string}[]>([])
   const [querying, setQuerying] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     fetchAssets()
   }, [])
+
+  // Poll for indexing assets
+  useEffect(() => {
+    const indexingAssets = assets.filter(a => a.status === 'INDEXING')
+    if (indexingAssets.length === 0) return
+
+    const interval = setInterval(async () => {
+      try {
+        const polls = indexingAssets.map(a => api.get(`/brain/status/${a.id}`))
+        const results = await Promise.all(polls)
+        
+        let changed = false
+        const newAssets = assets.map((asset: any) => {
+          const updated = results.find((r: any) => r.data.id === asset.id)
+          if (updated && updated.data.status !== asset.status) {
+            changed = true
+            return updated.data
+          }
+          return asset
+        })
+
+        if (changed) setAssets(newAssets)
+      } catch (err) {
+        console.error('Polling failed:', err)
+      }
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [assets])
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -36,7 +66,7 @@ export default function MarketingBrain() {
 
   const fetchAssets = async () => {
     try {
-      const res = await axios.get('/api/brain/assets')
+      const res = await api.get('/brain/assets')
       if (Array.isArray(res.data)) {
         setAssets(res.data)
       } else {
@@ -49,22 +79,34 @@ export default function MarketingBrain() {
     }
   }
 
-  const handleUpload = async () => {
-    // Mock upload for prototype
-    const name = prompt('Enter Asset Name (e.g., Brand Guide 2024)')
-    if (!name) return
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
 
     setUploading(true)
+    const formData = new FormData()
+    formData.append('file', file)
+
     try {
-      await axios.post('/api/brain/upload', {
-        name,
-        type: 'PDF',
-        size: 1024 * 1024 * 5, // 5MB mock
-        url: 'https://example.com/asset.pdf'
+      const res = await api.post('/brain/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       })
-      fetchAssets()
+      setAssets((prev: KnowledgeAsset[]) => [res.data, ...prev])
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Upload failed')
     } finally {
       setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Delete this knowledge asset?')) return
+    try {
+      await api.delete(`/brain/assets/${id}`)
+      setAssets((prev: KnowledgeAsset[]) => prev.filter(a => a.id !== id))
+    } catch (err: any) {
+      alert('Failed to delete asset')
     }
   }
 
@@ -74,14 +116,14 @@ export default function MarketingBrain() {
 
     const userMsg = query
     setQuery('')
-    setChatHistory(prev => [...prev, { role: 'user', content: userMsg }])
+    setChatHistory((prev: any[]) => [...prev, { role: 'user', content: userMsg }])
     setQuerying(true)
 
     try {
-      const res = await axios.post('/api/brain/query', { prompt: userMsg })
-      setChatHistory(prev => [...prev, { role: 'assistant', content: res.data.result }])
+      const res = await api.post('/brain/query', { prompt: userMsg })
+      setChatHistory((prev: any[]) => [...prev, { role: 'assistant', content: res.data.result }])
     } catch (err) {
-      setChatHistory(prev => [...prev, { role: 'assistant', content: 'Sorry, I couldn\'t connect to the Brain right now.' }])
+      setChatHistory((prev: any[]) => [...prev, { role: 'assistant', content: 'Sorry, I couldn\'t connect to the Brain right now.' }])
     } finally {
       setQuerying(false)
     }
@@ -103,13 +145,20 @@ export default function MarketingBrain() {
           </p>
         </div>
         <button 
-          onClick={handleUpload}
+          onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
           className="btn-primary flex items-center gap-2 px-6 py-3"
         >
           {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
           Index New Asset
         </button>
+        <input 
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileUpload}
+          className="hidden"
+          accept=".pdf,.docx,.txt"
+        />
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -150,18 +199,33 @@ export default function MarketingBrain() {
                         {asset.status === 'INDEXING' ? <Loader2 className="w-5 h-5 animate-spin" /> : <ShieldCheck className="w-5 h-5" />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-white truncate">{asset.name}</p>
+                        <p className="text-sm font-bold text-white truncate">
+                          {typeof asset.name === 'string' ? asset.name : 'Untitled Asset'}
+                        </p>
                         <p className="text-[10px] text-gray-500 uppercase tracking-tight">
                           {asset.type} • {(asset.size / 1024 / 1024).toFixed(1)} MB
                         </p>
                       </div>
-                      {asset.status === 'READY' && (
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button className="p-2 rounded-lg hover:bg-white/5 text-gray-400">
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-1 opacity-20 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                        {asset.url && (
+                          <a 
+                            href={asset.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-brand-400 transition-colors"
+                            title="View Public Link"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); handleDelete(asset.id); }}
+                          className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-red-400 transition-colors"
+                          title="Delete Asset"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
                     {asset.status === 'INDEXING' && (
                       <div className="absolute bottom-0 left-0 h-0.5 bg-brand-500 animate-pulse w-full" />
@@ -240,7 +304,9 @@ export default function MarketingBrain() {
                         ? 'bg-brand-500/20 border border-brand-500/20 text-white rounded-tr-none' 
                         : 'glass border-white/5 text-gray-300 rounded-tl-none'
                     }`}>
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}
+                      </p>
                     </div>
                   </motion.div>
                 ))

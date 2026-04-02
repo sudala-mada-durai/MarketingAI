@@ -2,7 +2,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import {
   LayoutDashboard, Users, Megaphone, FileImage, Sparkles,
-  BarChart2, Settings, LogOut, Zap, ChevronRight, Brain,
+  BarChart2, Settings, LogOut, Zap, ChevronRight, Brain, FileSearch,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -15,6 +15,7 @@ const nav = [
   { label: 'Intelligence', divider: true },
   { to: '/brain', icon: Brain, label: 'Marketing Brain' },
   { to: '/intelligence', icon: BarChart2, label: 'Competitor Intel' },
+  { to: '/docs', icon: FileSearch, label: 'Document Analyzer' },
   { label: 'Growth', divider: true },
   { to: '/campaigns', icon: Sparkles, label: 'Campaigns' },
   { label: 'System', divider: true },
