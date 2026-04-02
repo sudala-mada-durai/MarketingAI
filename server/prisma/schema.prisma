@@ -16,8 +16,10 @@ model Org {
   users         User[]
   leads         Lead[]
   campaigns     Campaign[]
-  turfAIConfigs TurfAIConfig[]
-  reminders     Reminder[]
+  turfAIConfigs   TurfAIConfig[]
+  reminders       Reminder[]
+  knowledgeAssets KnowledgeAsset[]
+  brainSessions   BrainSession[]
 }
 
 model User {
@@ -64,7 +66,7 @@ model Campaign {
 
 model TurfAIConfig {
   id          String   @id @default(uuid())
-  featureKey  String // e.g., 'brochure_gen', 'ad_gen'
+  featureKey  String // e.g., 'brochure_gen', 'ad_gen', 'rag_index', 'rag_query'
   webhookUrl  String
   secret      String // Encrypted
   orgId       String
@@ -82,6 +84,29 @@ model Reminder {
   isDone    Boolean  @default(false)
   leadId    String
   lead      Lead     @relation(fields: [leadId], references: [id])
+  orgId     String
+  org       Org      @relation(fields: [orgId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model KnowledgeAsset {
+  id        String   @id @default(uuid())
+  name      String
+  type      String   // PDF, DOCX, TXT
+  size      Int
+  status    String   @default("INDEXING") // INDEXING, READY, FAILED
+  url       String?
+  orgId     String
+  org       Org      @relation(fields: [orgId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BrainSession {
+  id        String   @id @default(uuid())
+  name      String   @default("New Strategy Session")
+  history   String?  // Stored as JSON string
   orgId     String
   org       Org      @relation(fields: [orgId], references: [id])
   createdAt DateTime @default(now())

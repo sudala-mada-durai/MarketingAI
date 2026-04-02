@@ -9,6 +9,7 @@ import BrochureBuilder from './pages/Studio/BrochureBuilder'
 import AdStudio from './pages/Studio/AdStudio'
 import Campaigns from './pages/Campaigns/Campaigns'
 import CompetitorIntel from './pages/CompetitorIntel'
+import MarketingBrain from './pages/Intelligence/MarketingBrain'
 import Settings from './pages/Settings'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -35,6 +36,7 @@ export default function App() {
             <Route path="studio/brochure" element={<BrochureBuilder />} />
             <Route path="studio/ads" element={<AdStudio />} />
             <Route path="campaigns" element={<Campaigns />} />
+            <Route path="brain" element={<MarketingBrain />} />
             <Route path="intelligence" element={<CompetitorIntel />} />
             <Route path="settings" element={<Settings />} />
           </Route>

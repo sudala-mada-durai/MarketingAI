@@ -10,12 +10,13 @@ import campaignRoutes from './routes/campaigns.routes'
 import reminderRoutes from './routes/reminders.routes'
 import turfRoutes from './routes/turf.routes'
 import settingsRoutes from './routes/settings.routes'
+import brainRoutes from './routes/brain-routes'
 import { ReminderService } from './services/reminder.service'
 
 const app = express()
 const PORT = process.env.PORT || 3001
 
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }))
+app.use(cors({ origin: true, credentials: true }))
 app.use(express.json())
 
 // Routes
@@ -25,6 +26,7 @@ app.use('/api/campaigns', campaignRoutes)
 app.use('/api/reminders', reminderRoutes)
 app.use('/api/turf', turfRoutes)
 app.use('/api/settings', settingsRoutes)
+app.use('/api/brain', brainRoutes)
 
 app.get('/health', (_req, res) => res.json({ status: 'ok', time: new Date().toISOString() }))
 

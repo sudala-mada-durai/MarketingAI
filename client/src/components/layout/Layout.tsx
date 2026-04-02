@@ -2,7 +2,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import {
   LayoutDashboard, Users, Megaphone, FileImage, Sparkles,
-  BarChart2, Settings, LogOut, Zap, ChevronRight,
+  BarChart2, Settings, LogOut, Zap, ChevronRight, Brain,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -12,9 +12,11 @@ const nav = [
   { label: 'Studio', divider: true },
   { to: '/studio/brochure', icon: FileImage, label: 'Brochure Builder' },
   { to: '/studio/ads', icon: Megaphone, label: 'Ad Studio' },
-  { label: 'Distribution', divider: true },
-  { to: '/campaigns', icon: Sparkles, label: 'Campaigns' },
+  { label: 'Intelligence', divider: true },
+  { to: '/brain', icon: Brain, label: 'Marketing Brain' },
   { to: '/intelligence', icon: BarChart2, label: 'Competitor Intel' },
+  { label: 'Growth', divider: true },
+  { to: '/campaigns', icon: Sparkles, label: 'Campaigns' },
   { label: 'System', divider: true },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ]
