@@ -15,7 +15,7 @@ const upload = multer({
  * POST /api/docs/analyze
  * Upload a document → TurfAI → receive a summary.
  */
-router.post('/analyze', upload.single('file'), async (req, res) => {
+router.post('/analyze', upload.single('file') as any, async (req, res) => {
   try {
     const file = req.file
     if (!file) return res.status(400).json({ message: 'File is required' })

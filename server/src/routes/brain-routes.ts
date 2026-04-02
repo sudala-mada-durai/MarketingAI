@@ -29,7 +29,7 @@ router.get('/assets', async (req, res) => {
  * POST /api/brain/upload
  * Real file upload that triggers TurfAI RAG Indexing.
  */
-router.post('/upload', upload.single('file'), async (req, res) => {
+router.post('/upload', upload.single('file') as any, async (req, res) => {
   try {
     const file = req.file
     if (!file) return res.status(400).json({ message: 'File is required' })
